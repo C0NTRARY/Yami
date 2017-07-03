@@ -1,8 +1,8 @@
-const express = require("express");
+const express = require('express');
 const bodyParser= require('body-parser');
 const localDynamo = require('local-dynamo');
 const app = express();
-const AWS = require("aws-sdk");
+const AWS = require('aws-sdk');
 
 app.use(bodyParser.urlencoded({extended: true}))
 
@@ -19,15 +19,67 @@ app.post('/sendMessage', function(req, res) {
 });
 
 AWS.config = new AWS.Config();
-AWS.config.accessKeyId = "AccessKey";
-AWS.config.secretAccessKey = "SecretAccessKey";
 AWS.config.update({
-  region: "us-west-2",
-  endpoint: "http://localhost:8000"
+    accessKeyId: "AccessKey",
+    secretAccessKey: "SecretAccessKey",
+    region: "us-west-2",
+    endpoint: "http://localhost:8000"
 });
 
 localDynamo.launch({
   port: 8000,
   sharedDb: true,
   heap: '512m'
+});
+
+// example for using dynamodb
+dynamoClient = new AWS.DynamoDB();
+
+const tableParams = {
+    TableName : "messages",
+    KeySchema: [       
+        { AttributeName: "channelId", KeyType: "HASH"}
+    ],
+    AttributeDefinitions: [       
+        { AttributeName: "channelId", AttributeType: "S" }
+    ],
+    ProvisionedThroughput: {
+        ReadCapacityUnits: 5, 
+        WriteCapacityUnits: 5
+    }
+};
+
+dynamoClient.createTable(tableParams, function(err, data) {
+    if (err) {
+        console.log("Error", err);
+    } else {
+        const messageParams = {
+            TableName:"messages",
+            Item:{
+                channelId : { S:"exampleChannelId"},
+                messageText: { S:"example message text"}
+            }
+        };
+
+        dynamoClient.putItem(messageParams, function(err, data) {
+            if (err) {
+                console.log("Error", err);
+            } else {
+                const getParams = {
+                    TableName: 'messages',
+                    Key: {
+                        'channelId' : {S: 'exampleChannelId'}
+                    }
+                };
+
+                dynamoClient.getItem(getParams, function(err, data) {
+                    if (err) {
+                        console.log("Error", err);
+                    } else {
+                        console.log("Success", data);
+                    }
+                });
+            }
+        });  
+    }
 });
