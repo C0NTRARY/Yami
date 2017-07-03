@@ -18,6 +18,7 @@
   "homepage": "https://github.com/C0NTRARY/Yami#readme",
   "dependencies": {
     "body-parser": "^1.17.2",
+    "dynamodb-local": "0.0.18",
     "express": "^4.15.3"
   },
   "devDependencies": {

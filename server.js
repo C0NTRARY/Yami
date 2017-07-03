@@ -1,8 +1,15 @@
 const express = require("express");
+const DynamoDbLocal = require('dynamodb-local');
+const dynamoLocalPort = 8000;
 const bodyParser= require('body-parser')
 const app = express();
 
 app.use(bodyParser.urlencoded({extended: true}))
+
+DynamoDbLocal.launch(dynamoLocalPort, null, ['-sharedDb'])
+    .then(function () {
+        DynamoDbLocal.stop(dynamoLocalPort);
+    });
 
 app.listen(3000, function() {
     console.log('Listening on port 3000');
