@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser= require('body-parser');
+const bodyParser= require('body-parser');
 const localDynamo = require('local-dynamo');
 const app = express();
 const AWS = require("aws-sdk");
