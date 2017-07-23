@@ -6,6 +6,7 @@ const ChatMessageList = ({ chatMessages }) => (
   <ul>
     {chatMessages.map(chatMessage =>
       <ChatMessage
+        key={chatMessage.id}
         {...chatMessage}
       />
     )}

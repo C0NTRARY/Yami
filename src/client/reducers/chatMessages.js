@@ -1,14 +1,13 @@
-import { SEND_MESSAGE } from "../actions"
+import { SEND_MESSAGE, UPLOAD_MESSAGE } from "../actions"
 
 const chatMessages = (state = [], action) => {
   switch (action.type) {
-    case SEND_MESSAGE:
+    case UPLOAD_MESSAGE:
       return [
         ...state,
         {
           id: action.id,
-          text: action.text,
-          completed: false
+          text: action.text
         }
       ]
     default:

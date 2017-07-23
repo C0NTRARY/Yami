@@ -6,8 +6,10 @@ import { createLogger } from 'redux-logger'
 import { Provider } from 'react-redux'
 import App from './components/App'
 import reducer from './reducers'
+import io from 'socket.io-client'
 
-const loggerMiddleware = createLogger()
+export const socket = io('localhost:3000');
+export const loggerMiddleware = createLogger()
 
 const store = createStore(reducer, applyMiddleware(thunkMiddleware, loggerMiddleware))
 
