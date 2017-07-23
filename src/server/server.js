@@ -14,11 +14,6 @@ http.listen(3000, function(){
   console.log('listening on *:3000');
 });
 
-// app.get('/hello', function(req, res) {
-//   console.log('hello endpoint');
-//   //res.sendFile('index.html', {root: './dist/public/'});
-// });
-
 app.post('/sendMessage', function(req, res) {
   console.log(req.body);
 });
@@ -26,6 +21,10 @@ app.post('/sendMessage', function(req, res) {
 socket.on('connection', function(socket){
   console.log('a user connected');
   
+  socket.on('message', data => {
+      console.log(data);
+  });
+
   socket.on('disconnect', function(){
     console.log('user disconnected');
   });
