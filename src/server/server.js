@@ -2,23 +2,37 @@ const express = require('express');
 const bodyParser= require('body-parser');
 const localDynamo = require('local-dynamo');
 const app = express();
+const http = require('http').Server(app);
 const AWS = require('aws-sdk');
+const socket = require('socket.io')(http);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(express.static('./dist/public'));
 
-app.listen(3000, function() {
-  console.log('Listening on port 3000');
+http.listen(3000, function(){
+  console.log('listening on *:3000');
 });
 
-app.get('/', function(req, res) {
-  res.sendFile('index.html', {root: './dist/public/'});
-});
+// app.get('/hello', function(req, res) {
+//   console.log('hello endpoint');
+//   //res.sendFile('index.html', {root: './dist/public/'});
+// });
 
 app.post('/sendMessage', function(req, res) {
   console.log(req.body);
 });
+
+socket.on('connection', function(socket){
+  console.log('a user connected');
+  
+  socket.on('disconnect', function(){
+    console.log('user disconnected');
+  });
+  
+});
+
+
 
 AWS.config = new AWS.Config();
 AWS.config.update({
