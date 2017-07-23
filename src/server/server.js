@@ -4,6 +4,7 @@ const localDynamo = require('local-dynamo');
 const app = express();
 const AWS = require('aws-sdk');
 
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(express.static('./dist/public'));
 
