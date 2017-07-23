@@ -6,7 +6,6 @@ const ChatMessageList = ({ chatMessages }) => (
   <ul>
     {chatMessages.map(chatMessage =>
       <ChatMessage
-        key={chatMessage.id}
         {...chatMessage}
       />
     )}
@@ -15,8 +14,6 @@ const ChatMessageList = ({ chatMessages }) => (
 
 ChatMessageList.propTypes = {
   chatMessages: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    completed: PropTypes.bool.isRequired,
     text: PropTypes.string.isRequired
   }).isRequired).isRequired
 }
