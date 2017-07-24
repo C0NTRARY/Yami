@@ -1,8 +1,9 @@
-const redisClient = require('./redisClient');
+const messageService = require('./service/messageService');
+const userService = require('./service/userService');
+const channelService = require('./service/channelService');
 const shortid = require('shortid');
 
 const radius = 50;
-
 
 function initSocket(io) {
   io.on('connection', function(socket) {
@@ -13,33 +14,34 @@ function initSocket(io) {
     let channelId = null;
     let userId = null;
 
-    redisClient.getChannel(latitude, longitude, radius)
+    channelService.getChannel(latitude, longitude, radius)
     .then((channel) => {
-      channelId = channel.channelId;
-      return channelId;
-    }, (error) => {
-      channelId = shortid.generate();
+      if (channel) {
+        channelId = channel.channelId;
+      } else {
+        channelId = shortid.generate();
+      }
       return channelId;
     })
     .then((channelId) => {
       socket.join(channelId);
 
       userId = shortid.generate();
-      return redisClient.addUser(userId, channelId);
+      return userService.addUser(userId, channelId);
     })
     .then((result) => {
-      return redisClient.getMessages(channelId, 10);
+      return messageService.getMessages(channelId, 10);
     })
     .then((messages) => {
       // emit the messages here
 
       socket.on('message', data => {
-        redisClient.addMessage(channelId, data.message, userId);
+        messageService.addMessage(channelId, data.message, userId);
       });
 
     })
     .catch((error) => {
-      // hehe xd
+      console.log(error);
     });
 
     socket.on('disconnect', () => {
