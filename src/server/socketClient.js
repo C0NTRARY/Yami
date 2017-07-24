@@ -6,53 +6,43 @@ const radius = 50;
 
 function initSocket(io) {
   io.on('connection', function(socket) {
+    console.log('user connected');
+
     let latitude = 1;
     let longitude = 2;
     let channelId = null;
+    let userId = null;
 
     redisClient.getChannel(latitude, longitude, radius)
     .then((channel) => {
       channelId = channel.channelId;
-    })
-    .catch((error) => {
+      return channelId;
+    }, (error) => {
       channelId = shortid.generate();
-      redisClient.createChannel(channelId, latitude, longitude);
-    });
+      return channelId;
+    })
+    .then((channelId) => {
+      socket.join(channelId);
 
-    socket.join(channelId);
-
-    let userId = shortid.generate();
-    redisClient.addUser(userId, channelId);
-
-    redisClient.getMessages(channelId, 10)
+      userId = shortid.generate();
+      return redisClient.addUser(userId, channelId);
+    })
+    .then((result) => {
+      return redisClient.getMessages(channelId, 10);
+    })
     .then((messages) => {
       // emit the messages here
-    })
-    .catch((error) => {
-      // can't emit any messages here
-    })
 
-    console.log('a user connected');
-
-    socket.on('message', data => {
-      console.log('message: ' + data.message);
-
-      redisClient.addMessage
-
-      redisClient.lpush("chatMessages", data.message, redis.print);
-
-      redisClient.lrange('chatMessages', 0, -1, function (error, items) {
-        if (items) {
-          items.forEach(function (item) {
-            console.log(item);
-          });
-        }
-
+      socket.on('message', data => {
+        redisClient.addMessage(channelId, data.message, userId);
       });
 
+    })
+    .catch((error) => {
+      // hehe xd
     });
 
-    socket.on('disconnect', function(){
+    socket.on('disconnect', () => {
       console.log('user disconnected');
     });
     

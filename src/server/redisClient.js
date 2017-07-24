@@ -162,7 +162,7 @@ function createChannel(channelId, latitude, longitude) {
  * @param {*} channelId 
  */
 function deleteChannel(channelId) {
-  //this method should be transactional
+  // this method should be transactional
 
   let p1 = new Promise((resolve, reject) => {
     geo.removeLocation(channelId, function(err, reply) {
