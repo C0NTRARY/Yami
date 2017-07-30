@@ -10,8 +10,20 @@ function initSocket(io) {
   io.on('connection', function(socket) {
     console.log('user connected');
 
-    let latitude = 1;
-    let longitude = 2;
+    socket.on('sendGeolocation', position => {
+      addUserToChannel(position);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('user disconnected');
+    });
+    
+  });
+}
+
+function addUserToChannel(position) {
+    let latitude = position.coords.latitude;
+    let longitude = position.coords.longitude;
     let channelId = null;
     let userId = null;
 
@@ -36,7 +48,7 @@ function initSocket(io) {
     })
     .then((messages) => {
       // emit the messages here
-      console.log('messages: ' + messages);
+      socket.emit('previousMessages', messages.reverse());
 
       socket.on('addMessage', data => {
         console.log('in the message handler: ' + data.message);
@@ -48,12 +60,6 @@ function initSocket(io) {
     .catch((error) => {
       console.log(error);
     });
-
-    socket.on('disconnect', () => {
-      console.log('user disconnected');
-    });
-    
-  });
 }
 
 module.exports.initSocket = initSocket;

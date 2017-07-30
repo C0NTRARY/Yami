@@ -4,6 +4,7 @@ import { socket } from '../.';
 export const SEND_MESSAGE = 'SEND_MESSAGE';
 export const UPLOAD_MESSAGE = 'UPLOAD_MESSAGE';
 export const RECIEVED_MESSAGE = 'RECIEVED_MESSAGE';
+export const SEND_GEOLOCATION = 'SEND_GEOLOCATION';
 
 let messageId = 0;
 
@@ -30,5 +31,12 @@ export function recievedMessage(text){
     type: RECIEVED_MESSAGE,
     text: text,
     id: messageId++
+  }
+}
+
+export function sendGeolocation(position){
+  return dispatch => {
+    console.log(JSON.stringify(position));
+    socket.emit('sendGeolocation', position);
   }
 }
