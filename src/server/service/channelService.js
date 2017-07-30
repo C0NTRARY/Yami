@@ -90,17 +90,18 @@ function deleteChannel(channelId) {
   });
 
   let p2 = new Promise((resolve, reject) => {
-    redisClient.del(channelId+'Messages', channelId+'Users', (error, result) => {
+    redisClient.del(channelId+'Messages', channelId+'Users', (err, result) => {
       if (err) {
         reject(err);
       } else {
-        resolve(reply);
+        resolve(result);
       }
     });
   });
 
-  return new Promise.all([p1, p2]);
+  return Promise.all([p1, p2]);
 }
 
 module.exports.getChannel = getChannel;
 module.exports.createChannel = createChannel;
+module.exports.deleteChannel = deleteChannel;

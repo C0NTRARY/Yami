@@ -13,7 +13,6 @@ function initSocket(io) {
     socket.on('sendGeolocation', position => {
       addUserToChannel(position, socket);
     });
-
   });
 }
 
@@ -47,16 +46,19 @@ function addUserToChannel(position, socket) {
       socket.emit('previousMessages', messages.reverse());
 
       socket.on('addMessage', data => {
-        console.log('in the message handler: ' + data.message);
         messageService.addMessage(channelId, data.message, userId);
         socket.broadcast.to(channelId).emit('broadcastMessage', data);
       });
 
       socket.on('disconnect', () => {
-        console.log('user disconnected');
+        console.log('user ' + userId + ' disconnected');
         userService.removeUser(userId, channelId)
         .then((result) => {
           // check if channel is empty
+          userService.getUsers(channelId)
+          .then((items) => {
+            cleanupChannel(channelId, items);
+          });
         });
       });
 
@@ -64,6 +66,18 @@ function addUserToChannel(position, socket) {
     .catch((error) => {
       console.log(error);
     });
+}
+
+function cleanupChannel(channelId, items) {
+  if(items.length == 0) {
+    channelService.deleteChannel(channelId)
+      .then(() => {
+        console.log('Channel ' + channelId + ' has been deleted');
+      })
+      .catch((err) => {
+        console.log('Channel ' + channelId + ' deletion has failed with error message: ' + err);
+      })
+  }
 }
 
 module.exports.initSocket = initSocket;

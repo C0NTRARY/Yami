@@ -26,7 +26,6 @@ export function uploadMessage(text){
 }
 
 export function recievedMessage(text){
-  console.log(text);
   return {
     type: RECIEVED_MESSAGE,
     text: text,
