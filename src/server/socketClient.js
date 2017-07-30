@@ -18,17 +18,17 @@ function initSocket(io) {
     channelService.getChannel(latitude, longitude, radius)
     .then((channel) => {
       if (channel) {
-        channelId = channel.channelId;
-      } else {
-        channelId = shortid.generate();
+        channelId = channel.key;
+        return Promise.resolve(channelId);
       }
-      return channelId;
+    }, (error) => {
+        channelId = shortid.generate();
+        return channelService.createChannel(channelId, latitude, longitude);
     })
     .then((channelId) => {
       socket.join(channelId);
 
       userId = shortid.generate();
-      console.log(userId + 'is in channel' + channelId);
       return userService.addUser(userId, channelId);
     })
     .then((result) => {
@@ -36,10 +36,12 @@ function initSocket(io) {
     })
     .then((messages) => {
       // emit the messages here
+      console.log('messages: ' + messages);
 
-      socket.on('message', data => {
+      socket.on('addMessage', data => {
+        console.log('in the message handler: ' + data.message);
         messageService.addMessage(channelId, data.message, userId);
-        io.to(channelId).broadcast.emit('broadcastMessage', data);
+        socket.broadcast.to(channelId).emit('broadcastMessage', data);
       });
 
     })

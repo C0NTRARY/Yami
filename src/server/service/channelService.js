@@ -38,11 +38,13 @@ function getChannel(latitude, longitude, radius) {
     geo.nearby({latitude: latitude, longitude: longitude}, radius, options, (error, locations) => {
 
       if (error) {
-        console.log('in getChannel error');
         reject(error);
       } else {
-        console.log('in getchannel success');
-        resolve(locations[0]);
+        if (locations.length === 0) {
+          reject('no channels found');
+        } else {
+          resolve(locations[0]);
+        }
       }
 
     });
@@ -64,7 +66,7 @@ function createChannel(channelId, latitude, longitude) {
       if (error) {
         reject(error);
       } else {
-        resolve(reply);
+        resolve(channelId);
       }
     })
   });
