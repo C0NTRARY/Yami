@@ -37,7 +37,7 @@ function getChannel(latitude, longitude, radius) {
 
     geo.nearby({latitude: latitude, longitude: longitude}, radius, options, (error, locations) => {
 
-      if(error) {
+      if (error) {
         console.log('in getChannel error');
         reject(error);
       } else {
