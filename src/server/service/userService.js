@@ -53,5 +53,22 @@ function addUser(userId, channelId) {
   });
 }
 
+
+function removeUser(userId, channelId) {
+
+  return new Promise((resolve, reject) => {
+
+    redisClient.srem(channelId+'Users', userId, (error, result) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+}
+
+
 module.exports.getUsers = getUsers;
 module.exports.addUser = addUser;
+module.exports.removeUser = removeUser;

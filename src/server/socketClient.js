@@ -14,10 +14,6 @@ function initSocket(io) {
       addUserToChannel(position, socket);
     });
 
-    socket.on('disconnect', () => {
-      console.log('user disconnected');
-    });
-    
   });
 }
 
@@ -54,6 +50,14 @@ function addUserToChannel(position, socket) {
         console.log('in the message handler: ' + data.message);
         messageService.addMessage(channelId, data.message, userId);
         socket.broadcast.to(channelId).emit('broadcastMessage', data);
+      });
+
+      socket.on('disconnect', () => {
+        console.log('user disconnected');
+        userService.removeUser(userId, channelId)
+        .then((result) => {
+          // check if channel is empty
+        });
       });
 
     })
