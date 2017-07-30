@@ -6,6 +6,7 @@ const shortid = require('shortid');
 const radius = 50;
 
 function initSocket(io) {
+
   io.on('connection', function(socket) {
     console.log('user connected');
 
@@ -27,6 +28,7 @@ function initSocket(io) {
       socket.join(channelId);
 
       userId = shortid.generate();
+      console.log(userId + 'is in channel' + channelId);
       return userService.addUser(userId, channelId);
     })
     .then((result) => {
@@ -37,6 +39,7 @@ function initSocket(io) {
 
       socket.on('message', data => {
         messageService.addMessage(channelId, data.message, userId);
+        io.to(channelId).broadcast.emit('broadcastMessage', data);
       });
 
     })
