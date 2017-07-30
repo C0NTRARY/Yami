@@ -36,7 +36,6 @@ export function recievedMessage(text){
 
 export function sendGeolocation(position){
   return dispatch => {
-    console.log(JSON.stringify(position));
-    socket.emit('sendGeolocation', position);
+    socket.emit('sendGeolocation', { latitude: position.coords.latitude, longitude: position.coords.longitude });
   }
 }

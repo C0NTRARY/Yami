@@ -14,16 +14,15 @@ export const loggerMiddleware = createLogger()
 
 const store = createStore(reducer, applyMiddleware(thunkMiddleware, loggerMiddleware));
 
-const geolocation = window.navigator.geolocation.getCurrentPosition((position) => {
-  console.log(JSON.stringify(position));
-  store.dispatch(sendGeolocation(position));
+const geolocation = window.navigator.geolocation.getCurrentPosition((Position) => {
+  store.dispatch(sendGeolocation(Position));
 });
 
 socket.on('broadcastMessage', data => {
   store.dispatch(recievedMessage(data.message));
 });
 
-socket.on('previousMessage', data => {
+socket.on('previousMessages', data => {
   data.forEach(message => {
     store.dispatch(recievedMessage(message));
   });

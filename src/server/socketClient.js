@@ -11,7 +11,7 @@ function initSocket(io) {
     console.log('user connected');
 
     socket.on('sendGeolocation', position => {
-      addUserToChannel(position);
+      addUserToChannel(position, socket);
     });
 
     socket.on('disconnect', () => {
@@ -21,9 +21,9 @@ function initSocket(io) {
   });
 }
 
-function addUserToChannel(position) {
-    let latitude = position.coords.latitude;
-    let longitude = position.coords.longitude;
+function addUserToChannel(position, socket) {
+    let latitude = position.latitude;
+    let longitude = position.longitude;
     let channelId = null;
     let userId = null;
 
