@@ -3,6 +3,8 @@ import { socket } from '../.';
 
 export const SEND_MESSAGE = 'SEND_MESSAGE';
 export const UPLOAD_MESSAGE = 'UPLOAD_MESSAGE';
+export const RECIEVED_MESSAGE = 'RECIEVED_MESSAGE';
+
 let messageId = 0;
 
 let nextMessageId = 0
@@ -10,13 +12,22 @@ let nextMessageId = 0
 export function sendMessage(text){
   return dispatch => {
     dispatch(uploadMessage(text));
-    return socket.emit('message', { message: text });
+    return socket.emit('addMessage', { message: text });
   }
 }
 
 export function uploadMessage(text){
   return {
     type: UPLOAD_MESSAGE,
+    text: text,
+    id: messageId++
+  }
+}
+
+export function recievedMessage(text){
+  console.log(text);
+  return {
+    type: RECIEVED_MESSAGE,
     text: text,
     id: messageId++
   }
